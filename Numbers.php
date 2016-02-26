@@ -157,7 +157,7 @@ $FirstDecadeDigits = [
 "1"=>new DoubleDigitsName("и еден","и еднa"),
 "2"=>new DoubleDigitsName("и двa","и две"),
 "3"=>new DoubleDigitsName("и три",""),
-"4"=>new DoubleDigitsName("четири",""),
+"4"=>new DoubleDigitsName("и четири",""),
 "5"=>new DoubleDigitsName("и пет",""),
 "6"=>new DoubleDigitsName("и шест",""),
 "7"=>new DoubleDigitsName("и седум",""),
@@ -196,7 +196,7 @@ $hundretsNames=[
 	"9"=>"деветстотини"
 ];
 
-function GetNumberAsString ($number,$triadeNamesMap )
+function GetNumberAsString ($number,$triadeNamesMap,$DecadesNames,$FirstDecadeDigits,$SpecialDoubleDigitNames )
 {
 	
 	$numberAsArray = str_split($number,1);
@@ -213,24 +213,26 @@ function GetNumberAsString ($number,$triadeNamesMap )
 		$triade = $triadeNamesMap[$curTriadeIndex];
 		$chunk = new Chunck($triadeArr,$triade,$hundretsNames,$DecadesNames,$FirstDecadeDigits,$SpecialDoubleDigitNames);
 		array_push($chunks,$chunk);
-		$curTriadeIndex = $curTriadeIndex+1;
+		$curTriadeIndex++;
 	}
 	
 	$chunks= array_reverse($chunks);
 	$res="";
-	foreach($chunks as $chunk){
-		$chunkName = $chunk->CalculateName();
-		$res = $res . $chunkName;
-	}
-	$res = rtrim($res,$chunkName);
-	if(trim($res)!=NULL)
+	$i=0;
+	$chuncksLength = count($chunks);
+	for($i=0;$i<$chuncksLength-1;$i++)
 	{
-		$res = $res . " и " . $chunkName;
-	}else{
-		$res = $res . " " . $chunkName;
+		$res = $res . " " . $chunk->CalculateName();
 	}
 	
-	return $res;
+	$lastChunkName = $chunks[$chuncksLength-1]->CalculateName();
+	if(trim($res)!=""){
+		$res = $res . " и " . $lastChunkName;
+	}else{
+		$res = $res . "  " . $lastChunkName;
+	}
+	
+	return str_replace("  ", " ", $res);
 }
 
 $tryChunk = new Chunck(array(1,2,3),new TriadName("илјада","илјади",false),$hundretsNames,$DecadesNames,$FirstDecadeDigits,$SpecialDoubleDigitNames);
